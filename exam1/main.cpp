@@ -20,14 +20,17 @@ uLCD_4DGL uLCD(D1, D0, D2); // serial tx, serial rx, reset pin;
 
 int selection_flag = 0;
 float ADCdata1[1000];
-float ADCdata2[5000];
-float ADCdata3[10000];
+float ADCdata2[1000];
+float ADCdata3[1000];
+float ADCdata4[1000];
 int period_count = 0;
 int period_count2 = 0;
 int period_count3 = 0;
+int period_count4 = 0;
 int loop_flag = 0;
 int loop_flag2 = 0;
 int loop_flag3 = 0;
+int loop_flag4 = 0;
 
 void normal_mode()
 {
@@ -319,9 +322,9 @@ void mode_select()
     float data;
     if(selection_flag == 0) //1
     {
-        while(1)
+        while(period_count<=(200))
         {
-            //loop_flag = loop_flag % 10;
+            loop_flag = loop_flag % 5;
             for(int i=0;i<80;i++)
             {
                 data = (3.0f / 80.0f * i)/3.3f;
@@ -329,12 +332,23 @@ void mode_select()
                 wait_us(500);
 
                 filtered_out = filtered_data; //adc
-                //ADCdata1[loop_flag*100+i] = filtered_data;
+                ADCdata1[loop_flag*240+i] = filtered_data;
                 //printf("%f\r\n", ADCdata1[loop_flag*100+i]);
 
                 wait_us(500);
             }
-            ThisThread::sleep_for(80ms);
+            for(int j=0;j<80;j++)
+            {
+                //data = (3.0f - 3.0f / 80.0f * j)/3.3f;
+                out = data;
+                wait_us(500);
+
+                filtered_out = filtered_data; //adc
+                ADCdata1[loop_flag*240+j+80] = filtered_data;
+                //printf("%f\r\n", ADCdata1[loop_flag*100+j+70]);
+
+                wait_us(500);
+            } 
             for(int j=0;j<80;j++)
             {
                 data = (3.0f - 3.0f / 80.0f * j)/3.3f;
@@ -342,43 +356,56 @@ void mode_select()
                 wait_us(500);
 
                 filtered_out = filtered_data; //adc
-                //ADCdata1[loop_flag*100+j+70] = filtered_data;
+                ADCdata1[loop_flag*240+160+j] = filtered_data;
                 //printf("%f\r\n", ADCdata1[loop_flag*100+j+70]);
 
                 wait_us(500);
             } 
-            //loop_flag++;
-            //period_count++;
+            loop_flag++;
+            period_count++;
         }
     }
     else if(selection_flag == 1) //50hz
     {
-        while(period_count2 <= (1500))
+        while(period_count2 <= (2000))
         {
-            loop_flag2 = loop_flag2 % 50;
-            for(int i=0;i<70;i++)
+            //loop_flag2 = loop_flag2 % 5;
+            for(int i=0;i<40;i++)
             {
-                data = (3.0f / 70.0f * i)/3.3f;
+                data = (3.0f / 40.0f * i)/3.3f;
                 out = data;
-                wait_us(70);
+                wait_us(500);
 
                 filtered_out = filtered_data; //adc
-                ADCdata2[loop_flag2*100+i] = filtered_data;
+
+                if(loop_flag2 <=4 && ((loop_flag2*240+i)<=1000)) ADCdata2[loop_flag2*240+i] = filtered_data;
                 //printf("%f\r\n", ADCdata2[loop_flag2*100+i]);
 
-                wait_us(70);
+                wait_us(500);
             }
-            for(int j=0;j<30;j++)
+            for(int j=0;j<160;j++)
             {
-                data = (3.0f - 3.0f / 30.0f * j)/3.3f;
+                //data = (3.0f - 3.0f / 80.0f * j)/3.3f;
                 out = data;
-                wait_us(70);
+                wait_us(500);
 
                 filtered_out = filtered_data; //adc
-                ADCdata2[loop_flag2*100+j+70] = filtered_data;
+                if(loop_flag2 <=4 && ((loop_flag2*240+j+40)<=1000)) ADCdata2[loop_flag2*240+j+40] = filtered_data;
+                //printf("%f\r\n", ADCdata1[loop_flag*100+j+70]);
+
+                wait_us(500);
+            } 
+            for(int j=0;j<40;j++)
+            {
+                data = (3.0f - 3.0f / 40.0f * j)/3.3f;
+                out = data;
+                wait_us(500);
+
+                filtered_out = filtered_data; //adc
+                if(loop_flag2 <=4 && ((loop_flag2*240+j+200)<=1000)) ADCdata2[loop_flag2*240+j+200] = filtered_data;
                 //printf("%f\r\n", ADCdata2[loop_flag2*100+j+70]);
 
-                wait_us(70);
+                wait_us(500);
             }
             loop_flag2++; 
             period_count2++;              
@@ -386,32 +413,89 @@ void mode_select()
     }
     else if(selection_flag == 2) //100hz
     {
-        while(period_count3 <= (3000))
+        while(period_count3 <= (2000))
         {
-            loop_flag3 = loop_flag3 % 100;
-            for(int i=0;i<70;i++)
+            //loop_flag3 = loop_flag3 % 5;
+            for(int i=0;i<20;i++)
             {
-                data = (3.0f / 70.0f * i)/3.3f;
+                data = (3.0f / 20.0f * i)/3.3f;
                 out = data;
-                wait_us(50);
+                wait_us(500);
 
                 filtered_out = filtered_data; //adc
-                ADCdata3[loop_flag3*100+i] = filtered_data;
+                ADCdata3[loop_flag3*240+i] = filtered_data;
                 //printf("%f\r\n", ADCdata3[loop_flag3*100+i]);
 
-                //wait_us(10);
+                wait_us(500);
             }
-            for(int j=0;j<30;j++)
+            for(int j=0;j<200;j++)
             {
-                data = (3.0f - 3.0f / 30.0f * j)/3.3f;
+                //data = (3.0f - 3.0f / 80.0f * j)/3.3f;
                 out = data;
-                wait_us(50);
+                wait_us(500);
 
                 filtered_out = filtered_data; //adc
-                ADCdata3[loop_flag3*100+j+70] = filtered_data;
+                ADCdata3[loop_flag3*240+j+20] = filtered_data;
+                //printf("%f\r\n", ADCdata1[loop_flag*100+j+70]);
+
+                wait_us(500);
+            } 
+            for(int j=0;j<20;j++)
+            {
+                data = (3.0f - 3.0f / 20.0f * j)/3.3f;
+                out = data;
+                wait_us(500);
+
+                filtered_out = filtered_data; //adc
+                ADCdata3[loop_flag3*240+j+220] = filtered_data;
                 //printf("%f\r\n", ADCdata3[loop_flag3*100+j+70]);
 
-                //wait_us(20);             
+                wait_us(500);             
+            }
+            loop_flag3 ++;
+            period_count3++;
+        }
+    }
+    else if(selection_flag == 3) //100hz
+    {
+        while(period_count3 <= (2000))
+        {
+            //loop_flag3 = loop_flag3 % 5;
+            for(int i=0;i<10;i++)
+            {
+                data = (3.0f / 10.0f * i)/3.3f;
+                out = data;
+                wait_us(500);
+
+                filtered_out = filtered_data; //adc
+                ADCdata4[loop_flag4*240+i] = filtered_data;
+                //printf("%f\r\n", ADCdata3[loop_flag3*100+i]);
+
+                wait_us(500);
+            }
+            for(int j=0;j<220;j++)
+            {
+                //data = (3.0f - 3.0f / 80.0f * j)/3.3f;
+                out = data;
+                wait_us(500);
+
+                filtered_out = filtered_data; //adc
+                ADCdata4[loop_flag4*240+j+10] = filtered_data;
+                //printf("%f\r\n", ADCdata1[loop_flag*100+j+70]);
+
+                wait_us(500);
+            } 
+            for(int j=0;j<10;j++)
+            {
+                data = (3.0f - 3.0f / 10.0f * j)/3.3f;
+                out = data;
+                wait_us(500);
+
+                filtered_out = filtered_data; //adc
+                ADCdata4[loop_flag4*240+j+230] = filtered_data;
+                //printf("%f\r\n", ADCdata3[loop_flag3*100+j+70]);
+
+                wait_us(500);             
             }
             loop_flag3 ++;
             period_count3++;
@@ -424,22 +508,27 @@ void mode_select()
     }
     else if(selection_flag == 1)
     {
-        for(int i=0; i<5000; i++) printf("%f\r\n", ADCdata2[i]);
+        for(int i=0; i<1000; i++) printf("%f\r\n", ADCdata2[i]);
     }
     else if(selection_flag == 2)
     {
-        for(int i=0; i<10000; i++) printf("%f\r\n", ADCdata3[i]);
+        for(int i=0; i<1000; i++) printf("%f\r\n", ADCdata3[i]);
+    }
+    else if(selection_flag == 3)
+    {
+        for(int i=0; i<1000; i++) printf("%f\r\n", ADCdata4[i]);
     }
 }
 
-void print_data()
+/*void print_data()
 {
-    for(int i=0; i<1000; i++)
+    while(true)
+    //for(int i=0; i<1000; i++)
     {
         printf("%f\r\n",(float)filtered_out);
-        ThisThread::sleep_for(10ms);
+        //ThisThread::sleep_for(10ms);
     }
-}
+}*/
 int main()
 {
     normal_mode();
@@ -449,6 +538,7 @@ int main()
     //    ThisThread::sleep_for(20s);
     //queue.call(print_data);
     //queue.call_(print_data);
+    //t.start(print_data);
     //}
     /*while(true)
     {
@@ -466,9 +556,12 @@ int main()
             mode_down();
         }
     }*/
+    //while(true)
+    //{
     up.rise(queue.event(mode_up));
     select_button.rise(queue.event(mode_select));
     //select_button.fall(&print_data);
     down.rise(queue.event(mode_down));
     //queue.dispatch();
+    //}
 }
